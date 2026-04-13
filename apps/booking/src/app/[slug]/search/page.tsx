@@ -8,7 +8,6 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import {
-  formatCurrency,
   calculateNights,
 } from "@hotelos/shared/utils";
 import type { Organization, RoomType } from "@hotelos/shared/types";
@@ -86,12 +85,12 @@ export default async function SearchPage({
     .eq("organization_id", org.id)
     .eq("is_active", true);
 
-  // Fetch overlapping bookings (not cancelled/no_show)
+  // Fetch overlapping bookings (not cancelled/no_show/checked_out)
   const { data: overlappingBookings } = await supabase
     .from("bookings")
     .select("id, room_type_id")
     .eq("organization_id", org.id)
-    .not("status", "in", '("cancelled","no_show")')
+    .in("status", ["pending_payment", "confirmed", "checked_in"])
     .lt("checkin_date", checkout)
     .gt("checkout_date", checkin);
 
@@ -288,7 +287,6 @@ export default async function SearchPage({
           adults={adults}
           children={children}
           accentColor={accentColor}
-          formatCurrency={formatCurrency}
           currency={org.currency}
         />
       )}

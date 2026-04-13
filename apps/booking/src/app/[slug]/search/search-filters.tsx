@@ -19,6 +19,7 @@ import {
   ArrowUpDown,
 } from "lucide-react";
 import { AMENITY_LABELS } from "@hotelos/shared/constants";
+import { formatCurrency } from "@hotelos/shared/utils";
 import type { RoomType } from "@hotelos/shared/types";
 
 const AMENITY_ICONS: Record<string, React.ReactNode> = {
@@ -49,7 +50,6 @@ export function SearchFilters({
   adults,
   children: childrenCount,
   accentColor,
-  formatCurrency,
   currency,
 }: {
   results: SearchResult[];
@@ -59,7 +59,6 @@ export function SearchFilters({
   adults: number;
   children: number;
   accentColor: string;
-  formatCurrency: (amount: number, currency: string) => string;
   currency: string;
 }) {
   const [sortBy, setSortBy] = useState<SortOption>("price_asc");
