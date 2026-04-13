@@ -1,0 +1,23 @@
+{
+  "name": "hotelos",
+  "private": true,
+  "packageManager": "pnpm@10.33.0",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "dev:dashboard": "turbo dev --filter=@hotelos/dashboard",
+    "dev:booking": "turbo dev --filter=@hotelos/booking",
+    "build:widget": "turbo build --filter=@hotelos/widget"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.0",
+    "typescript": "^5.8.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "sharp"
+    ]
+  }
+}
