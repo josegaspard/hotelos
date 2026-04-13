@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Organization } from "@hotelos/shared/types";
-import { CURRENCIES } from "@hotelos/shared/constants";
+import { CURRENCIES, CANCELLATION_POLICIES } from "@hotelos/shared/constants";
 import { Save, Upload, Loader2, Code, Copy, Check } from "lucide-react";
 
 interface SettingsFormProps {
@@ -53,6 +53,10 @@ export function SettingsForm({ organization }: SettingsFormProps) {
     tourism_tax: organization.tourism_tax.toString(),
     primary_color: organization.primary_color,
     secondary_color: organization.secondary_color,
+    cancellation_type: organization.cancellation_type ?? "flexible",
+    cancellation_free_hours: (organization.cancellation_free_hours ?? 48).toString(),
+    cancellation_partial_hours: (organization.cancellation_partial_hours ?? 24).toString(),
+    cancellation_partial_refund_pct: (organization.cancellation_partial_refund_pct ?? 50).toString(),
   });
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState(organization.logo_url ?? "");
@@ -118,6 +122,10 @@ export function SettingsForm({ organization }: SettingsFormProps) {
         tourism_tax: parseFloat(form.tourism_tax),
         primary_color: form.primary_color,
         secondary_color: form.secondary_color,
+        cancellation_type: form.cancellation_type,
+        cancellation_free_hours: parseInt(form.cancellation_free_hours),
+        cancellation_partial_hours: parseInt(form.cancellation_partial_hours),
+        cancellation_partial_refund_pct: parseFloat(form.cancellation_partial_refund_pct),
         logo_url,
         updated_at: new Date().toISOString(),
       })
@@ -373,6 +381,94 @@ export function SettingsForm({ organization }: SettingsFormProps) {
               className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
+        </div>
+      </div>
+
+      {/* Politica de cancelacion */}
+      <div className="bg-white rounded-xl border border-slate-200 p-6">
+        <h2 className="text-lg font-semibold text-slate-900 mb-4">
+          Pol&iacute;tica de cancelaci&oacute;n
+        </h2>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Tipo de pol&iacute;tica
+            </label>
+            <select
+              name="cancellation_type"
+              value={form.cancellation_type}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              {Object.entries(CANCELLATION_POLICIES).map(([key, val]) => (
+                <option key={key} value={key}>
+                  {val.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Policy description */}
+          <div className="bg-slate-50 rounded-lg p-3 text-sm text-slate-600">
+            {form.cancellation_type === "flexible" && (
+              <p>
+                Cancelaci&oacute;n gratuita hasta {form.cancellation_free_hours}h antes del check-in. Reembolso parcial del {form.cancellation_partial_refund_pct}% hasta {form.cancellation_partial_hours}h antes.
+              </p>
+            )}
+            {form.cancellation_type === "moderate" && (
+              <p>Cancelaci&oacute;n gratuita hasta 72h antes del check-in. Reembolso del 50% hasta 24h antes. Sin reembolso despu&eacute;s.</p>
+            )}
+            {form.cancellation_type === "strict" && (
+              <p>Cancelaci&oacute;n gratuita hasta 7 d&iacute;as antes del check-in. Reembolso del 50% hasta 72h antes. Sin reembolso despu&eacute;s.</p>
+            )}
+          </div>
+
+          {/* Editable fields for flexible only */}
+          {form.cancellation_type === "flexible" && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Cancelaci&oacute;n gratis (horas antes)
+                </label>
+                <input
+                  type="number"
+                  name="cancellation_free_hours"
+                  min="1"
+                  value={form.cancellation_free_hours}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Reembolso parcial (horas antes)
+                </label>
+                <input
+                  type="number"
+                  name="cancellation_partial_hours"
+                  min="1"
+                  value={form.cancellation_partial_hours}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Porcentaje de reembolso parcial
+                </label>
+                <input
+                  type="number"
+                  name="cancellation_partial_refund_pct"
+                  min="0"
+                  max="100"
+                  step="1"
+                  value={form.cancellation_partial_refund_pct}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

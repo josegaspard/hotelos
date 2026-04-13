@@ -30,6 +30,10 @@ export interface Organization {
   checkin_time: string;
   checkout_time: string;
   cancellation_policy: { type: string; hours_before: number };
+  cancellation_type: string;
+  cancellation_free_hours: number;
+  cancellation_partial_hours: number;
+  cancellation_partial_refund_pct: number;
   tax_percentage: number;
   tourism_tax: number;
   stripe_account_id: string | null;
@@ -98,11 +102,14 @@ export interface Booking {
   commission_amount: number;
   net_hotel: number;
   stripe_payment_intent_id: string | null;
+  stripe_refund_id: string | null;
+  refund_amount: number | null;
   payment_status: PaymentStatus;
   status: BookingStatus;
   source: BookingSource;
   special_requests: string | null;
   internal_notes: string | null;
+  confirmed_at: string | null;
   checked_in_at: string | null;
   checked_out_at: string | null;
   cancelled_at: string | null;

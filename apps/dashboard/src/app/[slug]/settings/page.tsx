@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Organization } from "@hotelos/shared/types";
 import { SettingsForm } from "./settings-form";
+import { StripeConnect } from "./stripe-connect";
 
 export default async function SettingsPage({
   params,
@@ -19,11 +20,12 @@ export default async function SettingsPage({
   if (!org) return null;
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold text-slate-900 mb-6">
+    <div className="space-y-8">
+      <h1 className="text-2xl font-bold text-slate-900">
         Configuración del hotel
       </h1>
       <SettingsForm organization={org as Organization} />
+      <StripeConnect organization={org as Organization} />
     </div>
   );
 }

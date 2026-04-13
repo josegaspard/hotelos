@@ -90,6 +90,8 @@ export default async function BookingDetailPage({
           roomTypeId={booking.room_type_id as string}
           roomId={booking.room_id as string | null}
           organizationId={org.id}
+          slug={slug}
+          hasStripePayment={!!booking.stripe_payment_intent_id}
         />
       </div>
 

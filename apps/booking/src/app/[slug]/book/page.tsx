@@ -14,6 +14,7 @@ import {
   AlertCircle,
   Plus,
   Baby,
+  CreditCard,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -24,8 +25,15 @@ import {
   generateBookingCode,
 } from "@hotelos/shared/utils";
 import type { Organization, RoomType, Service } from "@hotelos/shared/types";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+import { CheckoutForm } from "./checkout-form";
 
-type BookingStep = 1 | 2 | 3 | 4;
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
+);
+
+type BookingStep = 1 | 2 | 3 | 4 | 5;
 
 interface SelectedService {
   service: Service;
@@ -50,6 +58,10 @@ export default function BookPage() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [createdBookingId, setCreatedBookingId] = useState<string | null>(null);
+  const [createdBookingCode, setCreatedBookingCode] = useState<string | null>(null);
+  const [stripeAvailable, setStripeAvailable] = useState(false);
 
   const [org, setOrg] = useState<Organization | null>(null);
   const [roomType, setRoomType] = useState<RoomType | null>(null);
@@ -223,6 +235,13 @@ export default function BookPage() {
     });
   }
 
+  // Check if Stripe is available for this org
+  useEffect(() => {
+    if (org?.stripe_account_id && org?.stripe_onboarding_complete) {
+      setStripeAvailable(true);
+    }
+  }, [org]);
+
   async function handleSubmit() {
     if (!org || !roomType) return;
 
@@ -268,31 +287,39 @@ export default function BookPage() {
 
       const bookingCode = generateBookingCode(slug);
 
-      const { error: bookingErr } = await supabase.from("bookings").insert({
-        organization_id: org.id,
-        booking_code: bookingCode,
-        guest_id: guestId,
-        room_type_id: roomType.id,
-        checkin_date: checkin,
-        checkout_date: checkout,
-        nights,
-        adults,
-        children: childrenCount,
-        subtotal: Math.round(subtotal * 100) / 100,
-        extras_total: Math.round(extrasTotal * 100) / 100,
-        taxes: Math.round(taxInfo.taxes * 100) / 100,
-        total: Math.round(taxInfo.total * 100) / 100,
-        currency,
-        commission_rate: org.commission_rate,
-        commission_amount: commissionInfo.commission,
-        net_hotel: commissionInfo.netHotel,
-        payment_status: "paid",
-        status: "confirmed",
-        source: "widget",
-        special_requests: specialRequests || null,
-      });
+      // If Stripe is available, create as pending_payment; otherwise confirm directly
+      const useStripePayment = stripeAvailable;
 
-      if (bookingErr) throw new Error("Error al crear reserva");
+      const { data: bookingData, error: bookingErr } = await supabase
+        .from("bookings")
+        .insert({
+          organization_id: org.id,
+          booking_code: bookingCode,
+          guest_id: guestId,
+          room_type_id: roomType.id,
+          checkin_date: checkin,
+          checkout_date: checkout,
+          nights,
+          adults,
+          children: childrenCount,
+          subtotal: Math.round(subtotal * 100) / 100,
+          extras_total: Math.round(extrasTotal * 100) / 100,
+          taxes: Math.round(taxInfo.taxes * 100) / 100,
+          total: Math.round(taxInfo.total * 100) / 100,
+          currency,
+          commission_rate: org.commission_rate,
+          commission_amount: commissionInfo.commission,
+          net_hotel: commissionInfo.netHotel,
+          payment_status: useStripePayment ? "pending" : "paid",
+          status: useStripePayment ? "pending_payment" : "confirmed",
+          source: "widget",
+          special_requests: specialRequests || null,
+        })
+        .select("id, booking_code")
+        .single();
+
+      if (bookingErr || !bookingData)
+        throw new Error("Error al crear reserva");
 
       // Insert booking services
       if (selectedServices.length > 0) {
@@ -322,7 +349,34 @@ export default function BookPage() {
         );
       }
 
-      router.push(`/${slug}/confirmation/${bookingCode}`);
+      if (useStripePayment) {
+        // Create payment intent and show checkout form
+        const piRes = await fetch("/api/create-payment-intent", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            booking_id: bookingData.id,
+            organization_id: org.id,
+          }),
+        });
+
+        const piData = await piRes.json();
+
+        if (!piRes.ok) {
+          throw new Error(
+            piData.error || "Error al inicializar el pago"
+          );
+        }
+
+        setCreatedBookingId(bookingData.id);
+        setCreatedBookingCode(bookingData.booking_code);
+        setClientSecret(piData.clientSecret);
+        setStep(5);
+        setSubmitting(false);
+      } else {
+        // No Stripe - redirect directly to confirmation
+        router.push(`/${slug}/confirmation/${bookingCode}`);
+      }
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Error al procesar la reserva"
@@ -350,7 +404,9 @@ export default function BookPage() {
 
   if (!roomType || !org) return null;
 
-  const stepLabels = ["Habitacion", "Servicios", "Datos", "Confirmar"];
+  const stepLabels = stripeAvailable
+    ? ["Habitacion", "Servicios", "Datos", "Confirmar", "Pago"]
+    : ["Habitacion", "Servicios", "Datos", "Confirmar"];
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
@@ -380,7 +436,7 @@ export default function BookPage() {
                   {label}
                 </span>
               </div>
-              {i < 3 && (
+              {i < stepLabels.length - 1 && (
                 <div
                   className="flex-1 h-px mx-2"
                   style={{
@@ -763,8 +819,70 @@ export default function BookPage() {
         </div>
       )}
 
+      {/* Step 5: Stripe Payment */}
+      {step === 5 && clientSecret && (
+        <div className="space-y-5">
+          <div className="bg-white rounded-xl border border-border p-6 space-y-4">
+            <div className="flex items-center gap-3">
+              <div
+                className="p-2 rounded-lg"
+                style={{ backgroundColor: `${accentColor}15` }}
+              >
+                <CreditCard
+                  className="w-5 h-5"
+                  style={{ color: accentColor }}
+                />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">
+                  Pago seguro
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  Completa tu pago para confirmar la reserva
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-surface rounded-xl p-4 flex justify-between items-center">
+              <span className="text-sm text-muted-foreground">
+                Total a pagar
+              </span>
+              <span
+                className="text-lg font-bold"
+                style={{ color: accentColor }}
+              >
+                {formatCurrency(taxInfo.total, currency)}
+              </span>
+            </div>
+          </div>
+
+          <Elements
+            stripe={stripePromise}
+            options={{
+              clientSecret,
+              appearance: {
+                theme: "stripe",
+                variables: {
+                  colorPrimary: accentColor,
+                  borderRadius: "12px",
+                },
+              },
+            }}
+          >
+            <CheckoutForm
+              bookingId={createdBookingId!}
+              clientSecret={clientSecret}
+              total={taxInfo.total}
+              currency={currency}
+              accentColor={accentColor}
+              returnUrl={`${window.location.origin}/${slug}/confirmation/${createdBookingCode}`}
+            />
+          </Elements>
+        </div>
+      )}
+
       {/* Navigation buttons */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between" style={{ display: step === 5 ? "none" : undefined }}>
         {step > 1 ? (
           <button
             type="button"
@@ -778,7 +896,7 @@ export default function BookPage() {
           <div />
         )}
 
-        {step < 4 ? (
+        {step < 4 && step < 5 ? (
           <button
             type="button"
             onClick={() => {
@@ -808,10 +926,15 @@ export default function BookPage() {
                 <Loader2 className="h-4 w-4 animate-spin" />
                 Procesando...
               </>
+            ) : stripeAvailable ? (
+              <>
+                <CreditCard className="h-4 w-4" />
+                Proceder al pago
+              </>
             ) : (
               <>
                 <Check className="h-4 w-4" />
-                Confirmar y pagar
+                Confirmar reserva
               </>
             )}
           </button>

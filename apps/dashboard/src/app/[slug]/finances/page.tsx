@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { formatCurrency } from "@hotelos/shared/utils";
 import { DollarSign, TrendingDown, TrendingUp } from "lucide-react";
 import Link from "next/link";
+import { PayoutsSection } from "./payouts-section";
 
 const periods = [
   { key: "month", label: "Este mes" },
@@ -51,7 +52,7 @@ export default async function FinancesPage({
 
   const { data: org } = await supabase
     .from("organizations")
-    .select("id, currency")
+    .select("id, currency, stripe_account_id, stripe_onboarding_complete")
     .eq("slug", slug)
     .single();
 
@@ -224,6 +225,19 @@ export default async function FinancesPage({
             </tbody>
           </table>
         </div>
+      </div>
+      {/* Stripe Payouts */}
+      <div className="mt-8">
+        <h2 className="text-lg font-semibold text-slate-900 mb-4">
+          Pagos de Stripe
+        </h2>
+        <PayoutsSection
+          organizationId={org.id}
+          stripeConnected={
+            !!org.stripe_account_id && !!org.stripe_onboarding_complete
+          }
+          currency={org.currency}
+        />
       </div>
     </div>
   );

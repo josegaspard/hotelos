@@ -83,3 +83,21 @@ export const DEFAULT_TAX_PERCENTAGE = 16.0;
 export const DEFAULT_CHECKIN_TIME = "15:00";
 export const DEFAULT_CHECKOUT_TIME = "11:00";
 export const DEFAULT_CANCELLATION_HOURS = 48;
+
+export const CANCELLATION_POLICIES = {
+  flexible: {
+    label: "Flexible",
+    description:
+      "Cancelaci\u00f3n gratuita hasta X horas antes del check-in",
+  },
+  moderate: {
+    label: "Moderada",
+    description:
+      "Cancelaci\u00f3n gratuita hasta 72h. Reembolso 50% hasta 24h antes",
+  },
+  strict: {
+    label: "Estricta",
+    description:
+      "Cancelaci\u00f3n gratuita hasta 7 d\u00edas. Reembolso 50% hasta 72h antes",
+  },
+} as const;

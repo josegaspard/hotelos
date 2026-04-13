@@ -15,7 +15,9 @@
     "incremental": true,
     "paths": {
       "@hotelos/shared/*": ["./packages/shared/src/*"],
-      "@hotelos/ui/*": ["./packages/ui/src/*"]
+      "@hotelos/ui/*": ["./packages/ui/src/*"],
+      "@hotelos/email": ["./packages/email/src/index.ts"],
+      "@hotelos/email/*": ["./packages/email/src/*"]
     }
   },
   "exclude": ["node_modules"]
