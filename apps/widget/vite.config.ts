@@ -11,7 +11,7 @@ export default defineConfig({
     },
     outDir: "dist",
     emptyOutDir: true,
-    minify: "terser",
+    minify: "esbuild",
     rollupOptions: {
       output: {
         inlineDynamicImports: true,
