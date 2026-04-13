@@ -10,6 +10,9 @@ import {
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
+import Link from "next/link";
+
+const stepLabels = ["Fechas", "Habitación", "Huésped", "Confirmar"];
 
 interface RoomType {
   id: string;
@@ -201,34 +204,41 @@ export default function NewBookingPage() {
 
   return (
     <div>
-      <div className="flex items-center gap-3 mb-6">
-        <button
-          onClick={() => router.push(`/${slug}/bookings`)}
-          className="p-2 rounded-lg hover:bg-slate-100 transition-colors"
-        >
-          <ArrowLeft className="w-5 h-5 text-slate-500" />
-        </button>
-        <h1 className="text-2xl font-bold text-slate-900">Nueva reserva</h1>
-      </div>
+      <Link
+        href={`/${slug}/bookings`}
+        className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 mb-4 transition-colors"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Cancelar
+      </Link>
+
+      <h1 className="text-2xl font-bold text-slate-900 mb-6">Nueva reserva</h1>
 
       {/* Steps indicator */}
-      <div className="flex items-center gap-2 mb-8">
+      <div className="flex items-center gap-1 sm:gap-2 mb-8 overflow-x-auto">
         {[1, 2, 3, 4].map((s) => (
-          <div key={s} className="flex items-center gap-2">
-            <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                s === step
-                  ? "bg-blue-600 text-white"
-                  : s < step
-                    ? "bg-green-100 text-green-700"
-                    : "bg-slate-100 text-slate-400"
-              }`}
-            >
-              {s < step ? <Check className="w-4 h-4" /> : s}
+          <div key={s} className="flex items-center gap-1 sm:gap-2 shrink-0">
+            <div className="flex items-center gap-1.5">
+              <div
+                className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-medium ${
+                  s === step
+                    ? "bg-blue-600 text-white"
+                    : s < step
+                      ? "bg-green-100 text-green-700"
+                      : "bg-slate-100 text-slate-400"
+                }`}
+              >
+                {s < step ? <Check className="w-4 h-4" /> : s}
+              </div>
+              <span className={`text-xs font-medium hidden sm:inline ${
+                s === step ? "text-blue-600" : s < step ? "text-green-700" : "text-slate-400"
+              }`}>
+                {stepLabels[s - 1]}
+              </span>
             </div>
             {s < 4 && (
               <div
-                className={`w-12 h-0.5 ${
+                className={`w-6 sm:w-10 h-0.5 ${
                   s < step ? "bg-green-300" : "bg-slate-200"
                 }`}
               />
@@ -244,12 +254,13 @@ export default function NewBookingPage() {
             <h2 className="font-semibold text-slate-900 mb-4">
               Fechas y ocupacion
             </h2>
-            <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label htmlFor="checkin-date" className="block text-sm font-medium text-slate-700 mb-1">
                   Check-in
                 </label>
                 <input
+                  id="checkin-date"
                   type="date"
                   value={checkinDate}
                   min={today}
@@ -258,10 +269,11 @@ export default function NewBookingPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label htmlFor="checkout-date" className="block text-sm font-medium text-slate-700 mb-1">
                   Check-out
                 </label>
                 <input
+                  id="checkout-date"
                   type="date"
                   value={checkoutDate}
                   min={checkinDate || today}
@@ -272,10 +284,11 @@ export default function NewBookingPage() {
             </div>
             <div className="grid grid-cols-2 gap-4 mb-6">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label htmlFor="adults-count" className="block text-sm font-medium text-slate-700 mb-1">
                   Adultos
                 </label>
                 <input
+                  id="adults-count"
                   type="number"
                   value={adults}
                   min={1}
@@ -285,10 +298,11 @@ export default function NewBookingPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label htmlFor="children-count" className="block text-sm font-medium text-slate-700 mb-1">
                   Ninos
                 </label>
                 <input
+                  id="children-count"
                   type="number"
                   value={children}
                   min={0}
@@ -299,6 +313,7 @@ export default function NewBookingPage() {
               </div>
             </div>
             <button
+              type="button"
               onClick={() => setStep(2)}
               disabled={!checkinDate || !checkoutDate}
               className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
@@ -324,6 +339,7 @@ export default function NewBookingPage() {
             <div className="space-y-3 mb-6">
               {roomTypes.map((rt) => (
                 <button
+                  type="button"
                   key={rt.id}
                   onClick={() => setSelectedRoomTypeId(rt.id)}
                   disabled={rt.available_count <= 0}
@@ -367,12 +383,14 @@ export default function NewBookingPage() {
             </div>
             <div className="flex gap-2">
               <button
+                type="button"
                 onClick={() => setStep(1)}
                 className="px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
               >
                 Atras
               </button>
               <button
+                type="button"
                 onClick={() => setStep(3)}
                 disabled={!selectedRoomTypeId}
                 className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
@@ -430,12 +448,14 @@ export default function NewBookingPage() {
             </div>
             <div className="flex gap-2">
               <button
+                type="button"
                 onClick={() => setStep(2)}
                 className="px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
               >
                 Atras
               </button>
               <button
+                type="button"
                 onClick={() => setStep(4)}
                 disabled={!guestName || !guestEmail}
                 className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
@@ -520,12 +540,14 @@ export default function NewBookingPage() {
             </dl>
             <div className="flex gap-2">
               <button
+                type="button"
                 onClick={() => setStep(3)}
                 className="px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
               >
                 Atras
               </button>
               <button
+                type="button"
                 onClick={handleSubmit}
                 disabled={loading}
                 className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"

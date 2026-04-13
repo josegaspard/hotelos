@@ -41,11 +41,13 @@ export default async function GuestsPage({
         <h1 className="text-2xl font-bold text-slate-900">Huespedes</h1>
       </div>
 
-      <GuestSearch slug={slug} initialQuery={q || ""} />
+      <div className="mb-4">
+        <GuestSearch slug={slug} initialQuery={q || ""} />
+      </div>
 
       <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+        <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
+          <table className="w-full text-sm min-w-[650px]">
             <thead>
               <tr className="border-b border-slate-100 bg-slate-50">
                 <th className="text-left px-4 py-3 font-medium text-slate-500">

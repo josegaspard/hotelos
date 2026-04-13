@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Plus, BedDouble } from "lucide-react";
+import { Plus, BedDouble, ChevronRight } from "lucide-react";
 import { formatCurrency } from "@hotelos/shared/utils";
 import { AMENITY_LABELS, ROOM_STATUS_LABELS } from "@hotelos/shared/constants";
 import type { RoomType, Room } from "@hotelos/shared/types";
@@ -61,11 +61,18 @@ export default async function RoomsPage({
 
   return (
     <div>
+      {/* Breadcrumb */}
+      <div className="flex items-center gap-1.5 text-sm text-slate-400 mb-4">
+        <Link href={`/${slug}`} className="hover:text-slate-600 transition-colors">Dashboard</Link>
+        <ChevronRight className="w-3.5 h-3.5" />
+        <span className="text-slate-700 font-medium">Habitaciones</span>
+      </div>
+
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-slate-900">Habitaciones</h1>
         <Link
           href={`/${slug}/rooms/new`}
-          className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+          className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm"
         >
           <Plus className="w-4 h-4" />
           Agregar tipo
@@ -127,6 +134,16 @@ export default async function RoomsPage({
                     </div>
                   </div>
                 </Link>
+
+                <div className="px-5 py-2.5 border-t border-slate-100">
+                  <Link
+                    href={`/${slug}/rooms/${rt.id}`}
+                    className="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors"
+                  >
+                    Ver detalles
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
 
                 {typeRooms.length > 0 && (
                   <div className="px-5 pb-4 pt-2 border-t border-slate-100 flex flex-wrap gap-2">

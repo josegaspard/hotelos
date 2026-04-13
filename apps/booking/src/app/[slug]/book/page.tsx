@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import {
+  ArrowLeft,
   Bed,
   BedDouble,
   CalendarDays,
@@ -412,8 +413,29 @@ export default function BookPage() {
     ? ["Habitacion", "Servicios", "Datos", "Confirmar", "Pago"]
     : ["Habitacion", "Servicios", "Datos", "Confirmar"];
 
+  const backToSearch = `/${slug}/search?checkin=${checkin}&checkout=${checkout}&adults=${adults}&children=${childrenCount}`;
+
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-5 sm:space-y-6">
+      {/* Back navigation */}
+      <button
+        type="button"
+        onClick={() => router.push(backToSearch)}
+        className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors cursor-pointer"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Volver a resultados
+      </button>
+
+      {/* Progress breadcrumb */}
+      <div className="flex items-center gap-1.5 text-xs text-gray-400 overflow-x-auto">
+        <span className="whitespace-nowrap">{org.name}</span>
+        <ChevronRight className="h-3 w-3 flex-shrink-0" />
+        <span className="whitespace-nowrap">Busqueda</span>
+        <ChevronRight className="h-3 w-3 flex-shrink-0" />
+        <span className="whitespace-nowrap text-gray-700 font-medium">Reserva</span>
+      </div>
+
       {/* Steps indicator */}
       <div className="flex items-center justify-between">
         {stepLabels.map((label, i) => {
@@ -421,20 +443,20 @@ export default function BookPage() {
           const active = step === stepNum;
           const done = step > stepNum;
           return (
-            <div key={label} className="flex items-center gap-2 flex-1">
-              <div className="flex items-center gap-2">
+            <div key={label} className="flex items-center gap-1.5 sm:gap-2 flex-1">
+              <div className="flex items-center gap-1.5 sm:gap-2">
                 <div
-                  className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-colors"
+                  className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-semibold transition-colors flex-shrink-0"
                   style={{
                     backgroundColor: active || done ? accentColor : "#e2e8f0",
                     color: active || done ? "#fff" : "#64748b",
                   }}
                 >
-                  {done ? <Check className="h-4 w-4" /> : stepNum}
+                  {done ? <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> : stepNum}
                 </div>
                 <span
-                  className={`text-sm hidden sm:inline ${
-                    active ? "font-semibold text-gray-900" : "text-muted-foreground"
+                  className={`text-xs sm:text-sm hidden sm:inline ${
+                    active ? "font-semibold text-gray-900" : "text-gray-400"
                   }`}
                 >
                   {label}
@@ -442,7 +464,7 @@ export default function BookPage() {
               </div>
               {i < stepLabels.length - 1 && (
                 <div
-                  className="flex-1 h-px mx-2"
+                  className="flex-1 h-px mx-1 sm:mx-2"
                   style={{
                     backgroundColor: done ? accentColor : "#e2e8f0",
                   }}
@@ -916,64 +938,66 @@ export default function BookPage() {
       )}
 
       {/* Navigation buttons */}
-      <div className="flex items-center justify-between" style={{ display: step === 5 ? "none" : undefined }}>
-        {step > 1 ? (
-          <button
-            type="button"
-            onClick={() => setStep((s) => (s - 1) as BookingStep)}
-            className="flex items-center gap-1 px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-border rounded-xl hover:bg-gray-50 transition-colors cursor-pointer"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            Anterior
-          </button>
-        ) : (
-          <div />
-        )}
+      {step !== 5 && (
+        <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          {step > 1 ? (
+            <button
+              type="button"
+              onClick={() => setStep((s) => (s - 1) as BookingStep)}
+              className="flex items-center justify-center gap-1 px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 active:bg-gray-100 transition-all duration-200 cursor-pointer min-h-[48px]"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              Anterior
+            </button>
+          ) : (
+            <div className="hidden sm:block" />
+          )}
 
-        {step < 4 && step < 5 ? (
-          <button
-            type="button"
-            onClick={() => {
-              if (step === 3 && (!guestName.trim() || !guestEmail.trim())) {
-                setError("Por favor completa nombre y email.");
-                return;
-              }
-              setError(null);
-              setStep((s) => (s + 1) as BookingStep);
-            }}
-            className="flex items-center gap-1 px-6 py-2.5 rounded-xl text-white font-semibold hover:opacity-90 transition-opacity cursor-pointer text-sm"
-            style={{ backgroundColor: accentColor }}
-          >
-            Siguiente
-            <ChevronRight className="h-4 w-4" />
-          </button>
-        ) : (
-          <button
-            type="button"
-            onClick={handleSubmit}
-            disabled={submitting}
-            className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-white font-semibold hover:opacity-90 transition-opacity cursor-pointer text-sm disabled:opacity-60 disabled:cursor-not-allowed"
-            style={{ backgroundColor: accentColor }}
-          >
-            {submitting ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Procesando...
-              </>
-            ) : stripeAvailable ? (
-              <>
-                <CreditCard className="h-4 w-4" />
-                Proceder al pago
-              </>
-            ) : (
-              <>
-                <Check className="h-4 w-4" />
-                Confirmar reserva
-              </>
-            )}
-          </button>
-        )}
-      </div>
+          {step < 4 ? (
+            <button
+              type="button"
+              onClick={() => {
+                if (step === 3 && (!guestName.trim() || !guestEmail.trim())) {
+                  setError("Por favor completa nombre y email.");
+                  return;
+                }
+                setError(null);
+                setStep((s) => (s + 1) as BookingStep);
+              }}
+              className="flex items-center justify-center gap-1 px-6 py-3 rounded-xl text-white font-semibold hover:opacity-90 active:scale-[0.98] transition-all duration-200 cursor-pointer text-sm min-h-[48px] shadow-sm"
+              style={{ backgroundColor: accentColor }}
+            >
+              Siguiente
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={handleSubmit}
+              disabled={submitting}
+              className="flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-3.5 rounded-xl text-white font-bold hover:opacity-90 active:scale-[0.98] transition-all duration-200 cursor-pointer text-base disabled:opacity-60 disabled:cursor-not-allowed min-h-[52px] shadow-lg"
+              style={{ backgroundColor: stripeAvailable ? accentColor : "#16a34a" }}
+            >
+              {submitting ? (
+                <>
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  Procesando...
+                </>
+              ) : stripeAvailable ? (
+                <>
+                  <CreditCard className="h-5 w-5" />
+                  Proceder al pago
+                </>
+              ) : (
+                <>
+                  <Check className="h-5 w-5" />
+                  Confirmar reserva
+                </>
+              )}
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import type { Organization } from "@hotelos/shared/types";
+import { GuestStepper } from "./guest-stepper";
 
 function formatDateInput(date: Date): string {
   return date.toISOString().split("T")[0];
@@ -35,13 +36,19 @@ export default async function HotelPage({
 
   if (!org) {
     return (
-      <div className="max-w-5xl mx-auto px-4 py-20 text-center">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-20 text-center space-y-4">
         <h1 className="text-2xl font-bold text-gray-900">
           Hotel no encontrado
         </h1>
-        <p className="text-muted-foreground mt-2">
+        <p className="text-gray-500 mt-2">
           No pudimos encontrar el hotel solicitado.
         </p>
+        <a
+          href="/"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors text-sm"
+        >
+          Volver al inicio
+        </a>
       </div>
     );
   }
@@ -116,20 +123,20 @@ export default async function HotelPage({
             alt={org.name}
             width={1200}
             height={400}
-            className="w-full h-64 md:h-80 object-cover opacity-60"
+            className="w-full h-56 sm:h-64 md:h-80 object-cover opacity-60"
             priority
           />
         ) : (
           <div
-            className="w-full h-64 md:h-80"
+            className="w-full h-56 sm:h-64 md:h-80"
             style={{
               background: `linear-gradient(135deg, ${accentColor}, ${accentColor}99)`,
             }}
           />
         )}
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center text-white space-y-3 px-4">
-            <h1 className="text-3xl md:text-4xl font-bold drop-shadow-lg">
+          <div className="text-center text-white space-y-2 sm:space-y-3 px-4">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold drop-shadow-lg">
               {org.name}
             </h1>
             {org.star_rating && (
@@ -159,78 +166,58 @@ export default async function HotelPage({
       </div>
 
       {/* Search form */}
-      <div className="max-w-3xl mx-auto px-4 -mt-8 relative z-10 mb-12">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 -mt-8 relative z-10 mb-12">
         <form
           action={searchAvailability}
-          className="bg-white rounded-2xl shadow-lg border border-border p-6 md:p-8 space-y-6"
+          className="bg-white rounded-2xl shadow-lg border border-gray-100 p-5 sm:p-6 md:p-8 space-y-5 sm:space-y-6"
         >
-          <h2 className="text-xl font-bold text-gray-900">
+          <h2 className="text-lg sm:text-xl font-bold text-gray-900">
             Buscar disponibilidad
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
-                <CalendarDays className="h-4 w-4 text-muted-foreground" />
+              <label htmlFor="checkin" className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
+                <CalendarDays className="h-4 w-4 text-gray-400" />
                 Fecha de entrada
               </label>
               <input
                 type="date"
                 name="checkin"
+                id="checkin"
+                title="Fecha de entrada"
                 defaultValue={defaultCheckin}
                 min={formatDateInput(new Date())}
                 required
-                className="w-full px-3 py-2.5 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                className="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200"
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
-                <CalendarDays className="h-4 w-4 text-muted-foreground" />
+              <label htmlFor="checkout" className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
+                <CalendarDays className="h-4 w-4 text-gray-400" />
                 Fecha de salida
               </label>
               <input
                 type="date"
                 name="checkout"
+                id="checkout"
+                title="Fecha de salida"
                 defaultValue={defaultCheckout}
                 min={formatDateInput(tomorrow)}
                 required
-                className="w-full px-3 py-2.5 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
-                <Users className="h-4 w-4 text-muted-foreground" />
-                Adultos
-              </label>
-              <input
-                type="number"
-                name="adults"
-                defaultValue={defaultAdults}
-                min="1"
-                max="10"
-                required
-                className="w-full px-3 py-2.5 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
-                <Baby className="h-4 w-4 text-muted-foreground" />
-                Menores
-              </label>
-              <input
-                type="number"
-                name="children"
-                defaultValue={defaultChildren}
-                min="0"
-                max="6"
-                className="w-full px-3 py-2.5 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                className="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200"
               />
             </div>
           </div>
 
+          <GuestStepper
+            defaultAdults={parseInt(defaultAdults, 10)}
+            defaultChildren={parseInt(defaultChildren, 10)}
+          />
+
           <button
             type="submit"
-            className="w-full py-3 rounded-xl font-semibold text-white flex items-center justify-center gap-2 hover:opacity-90 transition-opacity cursor-pointer"
+            className="w-full py-3.5 rounded-xl font-semibold text-white flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all duration-200 cursor-pointer text-base shadow-sm"
             style={{ backgroundColor: accentColor }}
           >
             <Search className="h-5 w-5" />
@@ -238,6 +225,19 @@ export default async function HotelPage({
           </button>
         </form>
       </div>
+
+      {/* Powered by footer for landing */}
+      {cheapestRoom && (
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 pb-8 text-center">
+          <p className="text-sm text-gray-400">
+            Desde{" "}
+            <span className="font-semibold text-gray-600">
+              {org.currency} {cheapestRoom.base_price}
+            </span>{" "}
+            por noche
+          </p>
+        </div>
+      )}
     </div>
   );
 }

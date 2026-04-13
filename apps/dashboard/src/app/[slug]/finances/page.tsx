@@ -111,20 +111,22 @@ export default async function FinancesPage({
       </div>
 
       {/* Period selector */}
-      <div className="flex gap-1 mb-6 bg-slate-100 rounded-lg p-1 w-fit">
-        {periods.map((p) => (
-          <Link
-            key={p.key}
-            href={`/${slug}/finances?period=${p.key}`}
-            className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-              activePeriod === p.key
-                ? "bg-white text-slate-900 shadow-sm"
-                : "text-slate-500 hover:text-slate-700"
-            }`}
-          >
-            {p.label}
-          </Link>
-        ))}
+      <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0 mb-6">
+        <div className="flex gap-1 bg-slate-100 rounded-lg p-1 w-fit">
+          {periods.map((p) => (
+            <Link
+              key={p.key}
+              href={`/${slug}/finances?period=${p.key}`}
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors whitespace-nowrap ${
+                activePeriod === p.key
+                  ? "bg-white text-slate-900 shadow-sm"
+                  : "text-slate-500 hover:text-slate-700"
+              }`}
+            >
+              {p.label}
+            </Link>
+          ))}
+        </div>
       </div>
 
       {/* Stat cards */}
@@ -150,8 +152,8 @@ export default async function FinancesPage({
         <div className="p-5 border-b border-slate-100">
           <h2 className="font-semibold text-slate-900">Transacciones</h2>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+        <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
+          <table className="w-full text-sm min-w-[600px]">
             <thead>
               <tr className="border-b border-slate-100 bg-slate-50">
                 <th className="text-left px-4 py-3 font-medium text-slate-500">

@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { HotelStatusToggle } from "./hotel-status-toggle";
 
 export default async function AdminHotelsPage({
@@ -62,6 +63,14 @@ export default async function AdminHotelsPage({
 
   return (
     <div>
+      <Link
+        href="/admin"
+        className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 mb-4 transition-colors"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Volver al dashboard
+      </Link>
+
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-slate-900">Hoteles</h1>
         <p className="text-slate-500 text-sm mt-1">
@@ -70,8 +79,9 @@ export default async function AdminHotelsPage({
       </div>
 
       {/* Filter tabs */}
-      <div className="flex gap-2 mb-6">
-        {tabs.map((tab) => (
+      <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0 mb-6">
+        <div className="flex gap-2">
+          {tabs.map((tab) => (
           <Link
             key={tab.value}
             href={`/admin/hotels${tab.value === "all" ? "" : `?filter=${tab.value}`}`}
@@ -84,12 +94,13 @@ export default async function AdminHotelsPage({
             {tab.label}
           </Link>
         ))}
+        </div>
       </div>
 
       {/* Table */}
       <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
+        <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
+          <table className="w-full min-w-[900px]">
             <thead>
               <tr className="border-b border-slate-100 bg-slate-50">
                 <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">

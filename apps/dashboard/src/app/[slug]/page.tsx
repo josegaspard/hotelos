@@ -126,59 +126,93 @@ export default async function DashboardPage({
     <div>
       <h1 className="text-2xl font-bold text-slate-900 mb-6">Dashboard</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-8">
         {stats.map((stat) => (
           <div
             key={stat.label}
-            className="bg-white rounded-xl border border-slate-200 p-5"
+            className="bg-white rounded-xl border border-slate-200 p-4 md:p-5"
           >
             <div className="flex items-center justify-between mb-3">
-              <span className="text-sm text-slate-500">{stat.label}</span>
-              <div className={`p-2 rounded-lg ${stat.color}`}>
-                <stat.icon className="w-4 h-4" />
+              <span className="text-xs md:text-sm text-slate-500">{stat.label}</span>
+              <div className={`p-1.5 md:p-2 rounded-lg ${stat.color}`}>
+                <stat.icon className="w-3.5 h-3.5 md:w-4 md:h-4" />
               </div>
             </div>
-            <p className="text-2xl font-bold text-slate-900">{stat.value}</p>
-            <p className="text-xs text-slate-400 mt-1">{stat.sub}</p>
+            <p className="text-xl md:text-2xl font-bold text-slate-900">{stat.value}</p>
+            <p className="text-xs text-slate-400 mt-1 hidden md:block">{stat.sub}</p>
           </div>
         ))}
       </div>
 
       <div className="bg-white rounded-xl border border-slate-200">
-        <div className="p-5 border-b border-slate-100">
+        <div className="p-4 md:p-5 border-b border-slate-100">
           <h2 className="font-semibold text-slate-900">Últimas reservas</h2>
         </div>
         {recentBookings && recentBookings.length > 0 ? (
-          <div className="divide-y divide-slate-100">
-            {recentBookings.map((booking: Record<string, unknown>) => (
-              <div
-                key={booking.id as string}
-                className="px-5 py-4 flex items-center justify-between"
-              >
-                <div>
-                  <p className="font-medium text-slate-900 text-sm">
-                    {(booking.guests as Record<string, unknown>)?.full_name as string}
-                  </p>
-                  <p className="text-xs text-slate-400">
-                    {(booking.room_types as Record<string, unknown>)?.name as string} &middot;{" "}
-                    {booking.checkin_date as string} → {booking.checkout_date as string}
-                  </p>
+          <>
+            {/* Desktop table view */}
+            <div className="hidden md:block divide-y divide-slate-100">
+              {recentBookings.map((booking: Record<string, unknown>) => (
+                <div
+                  key={booking.id as string}
+                  className="px-5 py-4 flex items-center justify-between"
+                >
+                  <div>
+                    <p className="font-medium text-slate-900 text-sm">
+                      {(booking.guests as Record<string, unknown>)?.full_name as string}
+                    </p>
+                    <p className="text-xs text-slate-400">
+                      {(booking.room_types as Record<string, unknown>)?.name as string} &middot;{" "}
+                      {booking.checkin_date as string} → {booking.checkout_date as string}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-medium text-slate-900">
+                      {formatCurrency(booking.total as number, org.currency)}
+                    </span>
+                    <span
+                      className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+                        statusColors[booking.status as string] ?? "bg-slate-100"
+                      }`}
+                    >
+                      {statusLabels[booking.status as string] ?? booking.status}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-sm font-medium text-slate-900">
-                    {formatCurrency(booking.total as number, org.currency)}
-                  </span>
-                  <span
-                    className={`px-2.5 py-1 rounded-full text-xs font-medium ${
-                      statusColors[booking.status as string] ?? "bg-slate-100"
-                    }`}
-                  >
-                    {statusLabels[booking.status as string] ?? booking.status}
-                  </span>
+              ))}
+            </div>
+            {/* Mobile card view */}
+            <div className="md:hidden divide-y divide-slate-100">
+              {recentBookings.map((booking: Record<string, unknown>) => (
+                <div
+                  key={booking.id as string}
+                  className="px-4 py-3"
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <p className="font-medium text-slate-900 text-sm">
+                      {(booking.guests as Record<string, unknown>)?.full_name as string}
+                    </p>
+                    <span
+                      className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${
+                        statusColors[booking.status as string] ?? "bg-slate-100"
+                      }`}
+                    >
+                      {statusLabels[booking.status as string] ?? booking.status}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs text-slate-400">
+                      {(booking.room_types as Record<string, unknown>)?.name as string} &middot;{" "}
+                      {booking.checkin_date as string}
+                    </p>
+                    <span className="text-sm font-medium text-slate-900">
+                      {formatCurrency(booking.total as number, org.currency)}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </>
         ) : (
           <div className="p-12 text-center text-slate-400">
             <p>No hay reservas aún</p>

@@ -1,4 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
+import Link from "next/link";
 import {
   Building2,
   CalendarCheck,
@@ -6,6 +7,7 @@ import {
   TrendingUp,
   Users,
   BarChart3,
+  ArrowLeft,
 } from "lucide-react";
 
 export default async function AdminDashboardPage() {
@@ -118,6 +120,14 @@ export default async function AdminDashboardPage() {
 
   return (
     <div>
+      <Link
+        href="/"
+        className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 mb-4 transition-colors"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Volver al inicio
+      </Link>
+
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-slate-900">Admin Dashboard</h1>
         <p className="text-slate-500 text-sm mt-1">
@@ -125,7 +135,7 @@ export default async function AdminDashboardPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 mb-8">
         {stats.map((stat) => (
           <div
             key={stat.label}

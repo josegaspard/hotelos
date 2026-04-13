@@ -44,9 +44,9 @@ export default async function RoomTypeDetailPage({
       <div className="mb-6">
         <Link
           href={`/${slug}/rooms`}
-          className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-700 transition-colors mb-3"
+          className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 mb-4 transition-colors"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="h-4 w-4" />
           Volver a habitaciones
         </Link>
         <h1 className="text-2xl font-bold text-slate-900">

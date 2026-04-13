@@ -35,15 +35,19 @@ export default async function CancelBookingPage({
 
   if (!booking) {
     return (
-      <div className="max-w-lg mx-auto px-4 py-16 text-center">
-        <div className="bg-white rounded-xl border border-slate-200 p-8">
+      <div className="max-w-lg mx-auto px-4 sm:px-6 py-16 text-center space-y-4">
+        <a href={`/${slug}`} className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+          Volver al hotel
+        </a>
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
           <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-50 flex items-center justify-center">
             <svg className="w-8 h-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </div>
-          <h1 className="text-xl font-bold text-slate-900 mb-2">Reserva no encontrada</h1>
-          <p className="text-slate-500">No se encontr&oacute; una reserva con el c&oacute;digo proporcionado.</p>
+          <h1 className="text-xl font-bold text-gray-900 mb-2">Reserva no encontrada</h1>
+          <p className="text-gray-500">No se encontro una reserva con el codigo proporcionado.</p>
         </div>
       </div>
     );
@@ -51,15 +55,19 @@ export default async function CancelBookingPage({
 
   if (booking.status === "cancelled") {
     return (
-      <div className="max-w-lg mx-auto px-4 py-16 text-center">
-        <div className="bg-white rounded-xl border border-slate-200 p-8">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-100 flex items-center justify-center">
-            <svg className="w-8 h-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div className="max-w-lg mx-auto px-4 sm:px-6 py-16 text-center space-y-4">
+        <a href={`/${slug}`} className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+          Volver al hotel
+        </a>
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+            <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
             </svg>
           </div>
-          <h1 className="text-xl font-bold text-slate-900 mb-2">Reserva ya cancelada</h1>
-          <p className="text-slate-500">Esta reserva fue cancelada previamente.</p>
+          <h1 className="text-xl font-bold text-gray-900 mb-2">Reserva ya cancelada</h1>
+          <p className="text-gray-500">Esta reserva fue cancelada previamente.</p>
         </div>
       </div>
     );
@@ -67,15 +75,19 @@ export default async function CancelBookingPage({
 
   if (booking.status === "checked_in" || booking.status === "checked_out") {
     return (
-      <div className="max-w-lg mx-auto px-4 py-16 text-center">
-        <div className="bg-white rounded-xl border border-slate-200 p-8">
+      <div className="max-w-lg mx-auto px-4 sm:px-6 py-16 text-center space-y-4">
+        <a href={`/${slug}`} className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+          Volver al hotel
+        </a>
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
           <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-50 flex items-center justify-center">
             <svg className="w-8 h-8 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
             </svg>
           </div>
-          <h1 className="text-xl font-bold text-slate-900 mb-2">No se puede cancelar</h1>
-          <p className="text-slate-500">Esta reserva ya no puede ser cancelada.</p>
+          <h1 className="text-xl font-bold text-gray-900 mb-2">No se puede cancelar</h1>
+          <p className="text-gray-500">Esta reserva ya no puede ser cancelada.</p>
         </div>
       </div>
     );
@@ -109,12 +121,30 @@ export default async function CancelBookingPage({
   }
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold text-slate-900 mb-6">Cancelar reserva</h1>
+    <div className="max-w-lg mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-5">
+      {/* Back navigation */}
+      <a
+        href={`/${slug}/confirmation/${code}`}
+        className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
+      >
+        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+        Volver
+      </a>
+
+      {/* Warning banner */}
+      <div className="bg-amber-50 border-2 border-amber-300 rounded-2xl p-4 flex items-start gap-3">
+        <svg className="h-5 w-5 text-amber-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" /></svg>
+        <div>
+          <p className="text-sm font-semibold text-amber-800">Estas a punto de cancelar tu reserva</p>
+          <p className="text-xs text-amber-600 mt-0.5">Esta accion no se puede deshacer.</p>
+        </div>
+      </div>
+
+      <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Cancelar reserva</h1>
 
       {/* Booking details */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6 mb-6">
-        <h2 className="text-lg font-semibold text-slate-900 mb-4">Detalles de la reserva</h2>
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 sm:p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Detalles de la reserva</h2>
         <dl className="space-y-3 text-sm">
           <div className="flex justify-between">
             <dt className="text-slate-500">C&oacute;digo</dt>
@@ -150,27 +180,27 @@ export default async function CancelBookingPage({
       </div>
 
       {/* Cancellation policy */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6 mb-6">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 sm:p-6">
         <h2 className="text-lg font-semibold text-slate-900 mb-2">
           Pol&iacute;tica de cancelaci&oacute;n: {policyInfo.label}
         </h2>
         <p className="text-sm text-slate-500 mb-4">{policyExplanation}</p>
 
-        <div className="bg-slate-50 rounded-lg p-4">
+        <div className={`rounded-xl p-4 border-2 ${Number(refundData.refund_amount) > 0 ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"}`}>
           {Number(refundData.refund_amount) > 0 ? (
             <div>
-              <p className="text-sm font-medium text-green-700">
-                Recibir&aacute;s un reembolso de ${Number(refundData.refund_amount).toFixed(2)} ({Number(refundData.refund_percentage)}%)
+              <p className="text-base font-bold text-green-700">
+                Reembolso: ${Number(refundData.refund_amount).toFixed(2)} ({Number(refundData.refund_percentage)}%)
               </p>
-              <p className="text-xs text-slate-500 mt-1">
+              <p className="text-xs text-green-600 mt-1">
                 Faltan {Math.round(Number(refundData.hours_until_checkin))} horas para el check-in
               </p>
             </div>
           ) : (
             <div>
-              <p className="text-sm font-medium text-red-600">No se aplica reembolso</p>
-              <p className="text-xs text-slate-500 mt-1">
-                Seg&uacute;n la pol&iacute;tica de cancelaci&oacute;n, no es posible obtener un reembolso en este momento.
+              <p className="text-base font-bold text-red-700">No se aplica reembolso</p>
+              <p className="text-xs text-red-500 mt-1">
+                Segun la politica de cancelacion, no es posible obtener un reembolso en este momento.
               </p>
             </div>
           )}

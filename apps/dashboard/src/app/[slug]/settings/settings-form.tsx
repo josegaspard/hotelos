@@ -527,12 +527,12 @@ export function SettingsForm({ organization }: SettingsFormProps) {
         </div>
       </div>
 
-      {/* Save button */}
-      <div className="flex justify-end">
+      {/* Save button - sticky on mobile */}
+      <div className="md:flex md:justify-end sticky bottom-0 md:static bg-white md:bg-transparent border-t md:border-t-0 border-slate-200 p-4 md:p-0 -mx-4 md:mx-0 z-10">
         <button
           type="submit"
           disabled={saving}
-          className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 text-sm font-medium"
+          className="flex items-center justify-center gap-2 w-full md:w-auto px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 text-sm font-medium"
         >
           {saving ? (
             <Loader2 className="w-4 h-4 animate-spin" />

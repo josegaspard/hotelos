@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import {
+  ArrowLeft,
   CalendarDays,
   Users,
   Baby,
@@ -66,12 +67,19 @@ export default async function SearchPage({
 
   if (!roomTypes || roomTypes.length === 0) {
     return (
-      <div className="max-w-5xl mx-auto px-4 py-16 text-center space-y-4">
-        <SearchX className="h-16 w-16 mx-auto text-muted-foreground" />
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-16 text-center space-y-4">
+        <Link
+          href={`/${slug}`}
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors mb-4"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Volver
+        </Link>
+        <SearchX className="h-16 w-16 mx-auto text-gray-300" />
         <h1 className="text-2xl font-bold text-gray-900">
           No hay habitaciones configuradas
         </h1>
-        <p className="text-muted-foreground">
+        <p className="text-gray-500">
           Este hotel aun no tiene tipos de habitacion disponibles.
         </p>
       </div>
@@ -224,40 +232,49 @@ export default async function SearchPage({
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8 space-y-6">
-      {/* Search summary */}
-      <div className="bg-white rounded-xl border border-border p-4 flex flex-wrap gap-4 items-center">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-5 sm:space-y-6">
+      {/* Back navigation */}
+      <Link
+        href={`/${slug}`}
+        className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Modificar busqueda
+      </Link>
+
+      {/* Search summary - sticky */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-3 sm:p-4 flex flex-wrap gap-3 sm:gap-4 items-center sticky top-[57px] sm:top-[65px] z-40">
         <div className="flex items-center gap-2 text-sm">
-          <CalendarDays className="h-4 w-4 text-muted-foreground" />
-          <span className="font-medium">
+          <CalendarDays className="h-4 w-4 text-gray-400" />
+          <span className="font-medium text-gray-900">
             {formatDateDisplay(checkin)}
           </span>
-          <span className="text-muted-foreground">→</span>
-          <span className="font-medium">
+          <span className="text-gray-400">→</span>
+          <span className="font-medium text-gray-900">
             {formatDateDisplay(checkout)}
           </span>
-          <span className="text-muted-foreground">
+          <span className="text-gray-400 hidden sm:inline">
             ({nights} {nights === 1 ? "noche" : "noches"})
           </span>
         </div>
         <div className="flex items-center gap-3 text-sm">
-          <span className="flex items-center gap-1">
-            <Users className="h-4 w-4 text-muted-foreground" />
-            {adults} {adults === 1 ? "adulto" : "adultos"}
+          <span className="flex items-center gap-1 text-gray-600">
+            <Users className="h-4 w-4 text-gray-400" />
+            {adults}
           </span>
           {children > 0 && (
-            <span className="flex items-center gap-1">
-              <Baby className="h-4 w-4 text-muted-foreground" />
-              {children} {children === 1 ? "menor" : "menores"}
+            <span className="flex items-center gap-1 text-gray-600">
+              <Baby className="h-4 w-4 text-gray-400" />
+              {children}
             </span>
           )}
         </div>
         <Link
           href={`/${slug}`}
-          className="ml-auto text-sm font-medium hover:underline"
+          className="ml-auto text-sm font-medium hover:underline hidden sm:inline"
           style={{ color: accentColor }}
         >
-          Modificar busqueda
+          Cambiar fechas
         </Link>
       </div>
 

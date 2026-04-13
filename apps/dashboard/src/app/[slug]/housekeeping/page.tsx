@@ -69,8 +69,8 @@ export default async function HousekeepingPage({
     <div>
       <h1 className="text-2xl font-bold text-slate-900 mb-6">Housekeeping</h1>
 
-      {/* Summary cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+      {/* Summary cards - status legend */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 mb-6">
         {(["dirty", "in_progress", "clean", "inspected"] as const).map(
           (status) => (
             <div

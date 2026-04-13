@@ -56,40 +56,43 @@ export default async function BookingsPage({
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-6 gap-3">
         <h1 className="text-2xl font-bold text-slate-900">Reservas</h1>
         <Link
           href={`/${slug}/bookings/new`}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm shrink-0"
         >
           <Plus className="w-4 h-4" />
-          Nueva reserva
+          <span className="hidden sm:inline">Nueva reserva</span>
+          <span className="sm:hidden">Nueva</span>
         </Link>
       </div>
 
-      <div className="flex gap-1 mb-4 bg-slate-100 rounded-lg p-1">
-        {filterTabs.map((tab) => (
-          <Link
-            key={tab.key}
-            href={
-              tab.key === "all"
-                ? `/${slug}/bookings`
-                : `/${slug}/bookings?filter=${tab.key}`
-            }
-            className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-              (filter === tab.key || (!filter && tab.key === "all"))
-                ? "bg-white text-slate-900 shadow-sm"
-                : "text-slate-500 hover:text-slate-700"
-            }`}
-          >
-            {tab.label}
-          </Link>
-        ))}
+      <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0 mb-4">
+        <div className="flex gap-1 bg-slate-100 rounded-lg p-1 w-fit min-w-full md:min-w-0">
+          {filterTabs.map((tab) => (
+            <Link
+              key={tab.key}
+              href={
+                tab.key === "all"
+                  ? `/${slug}/bookings`
+                  : `/${slug}/bookings?filter=${tab.key}`
+              }
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors whitespace-nowrap ${
+                (filter === tab.key || (!filter && tab.key === "all"))
+                  ? "bg-white text-slate-900 shadow-sm"
+                  : "text-slate-500 hover:text-slate-700"
+              }`}
+            >
+              {tab.label}
+            </Link>
+          ))}
+        </div>
       </div>
 
       <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+        <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
+          <table className="w-full text-sm min-w-[700px]">
             <thead>
               <tr className="border-b border-slate-100 bg-slate-50">
                 <th className="text-left px-4 py-3 font-medium text-slate-500">

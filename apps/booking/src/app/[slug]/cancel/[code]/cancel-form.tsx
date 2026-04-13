@@ -74,7 +74,7 @@ export function CancelForm({
   }
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-6">
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 sm:p-6">
       {/* Reason textarea */}
       <div className="mb-4">
         <label className="block text-sm font-medium text-slate-700 mb-1">
@@ -111,26 +111,29 @@ export function CancelForm({
       {/* Action buttons */}
       {step === "initial" || step === "error" ? (
         <button
+          type="button"
           onClick={() => setStep("confirm")}
-          className="w-full px-4 py-3 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-colors"
+          className="w-full px-4 py-3 bg-red-600 text-white rounded-xl text-sm font-semibold hover:bg-red-700 active:scale-[0.98] transition-all duration-200 cursor-pointer min-h-[48px]"
         >
-          Confirmar cancelaci&oacute;n
+          Confirmar cancelacion
         </button>
       ) : step === "confirm" ? (
         <div>
-          <p className="text-sm text-slate-700 mb-3 font-medium text-center">
-            &iquest;Est&aacute;s seguro? Esta acci&oacute;n no se puede deshacer.
+          <p className="text-sm text-gray-700 mb-3 font-medium text-center">
+            Estas seguro? Esta accion no se puede deshacer.
           </p>
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3">
             <button
+              type="button"
               onClick={handleConfirm}
-              className="flex-1 px-4 py-3 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-colors"
+              className="flex-1 px-4 py-3 bg-red-600 text-white rounded-xl text-sm font-semibold hover:bg-red-700 active:scale-[0.98] transition-all duration-200 cursor-pointer min-h-[48px]"
             >
-              S&iacute;, cancelar reserva
+              Si, cancelar reserva
             </button>
             <button
+              type="button"
               onClick={() => setStep("initial")}
-              className="flex-1 px-4 py-3 bg-slate-100 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-200 transition-colors"
+              className="flex-1 px-4 py-3 bg-gray-100 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-200 active:bg-gray-300 transition-all duration-200 cursor-pointer min-h-[48px]"
             >
               No, mantener reserva
             </button>

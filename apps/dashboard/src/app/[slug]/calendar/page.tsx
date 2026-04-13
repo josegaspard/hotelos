@@ -33,11 +33,13 @@ export default async function CalendarPage({
       </h1>
 
       {roomTypes && roomTypes.length > 0 ? (
-        <CalendarGrid
-          roomTypes={roomTypes as RoomType[]}
-          organizationId={org.id}
-          currency={org.currency}
-        />
+        <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
+          <CalendarGrid
+            roomTypes={roomTypes as RoomType[]}
+            organizationId={org.id}
+            currency={org.currency}
+          />
+        </div>
       ) : (
         <div className="bg-white rounded-xl border border-slate-200 p-12 text-center text-slate-400">
           <p>No hay tipos de habitación configurados</p>

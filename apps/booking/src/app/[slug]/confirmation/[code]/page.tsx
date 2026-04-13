@@ -70,39 +70,34 @@ export default async function ConfirmationPage({
     org.cancellation_policy?.type || "flexible";
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
+    <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-6">
       {/* Success header */}
       <div className="text-center space-y-4">
-        <div
-          className="mx-auto w-20 h-20 rounded-full flex items-center justify-center"
-          style={{ backgroundColor: accentColor + "15" }}
-        >
-          <CheckCircle2
-            className="h-10 w-10"
-            style={{ color: accentColor }}
-          />
+        <div className="mx-auto w-20 h-20 rounded-full bg-green-100 flex items-center justify-center animate-[scale-in_0.3s_ease-out]">
+          <CheckCircle2 className="h-10 w-10 text-green-600" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
             Reserva confirmada
           </h1>
-          <p className="text-muted-foreground mt-1">
+          <p className="text-gray-500 mt-1">
             Tu reserva ha sido procesada exitosamente
           </p>
         </div>
-        <div
-          className="inline-block px-6 py-3 rounded-xl text-lg font-mono font-bold tracking-wider"
-          style={{
-            backgroundColor: accentColor + "10",
-            color: accentColor,
-          }}
+        {/* Copyable booking code */}
+        <button
+          type="button"
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-lg font-mono font-bold tracking-wider bg-green-50 text-green-700 border-2 border-green-200 hover:bg-green-100 transition-colors cursor-pointer copy-code-btn"
+          title="Clic para copiar"
         >
           {booking.booking_code}
-        </div>
+          <svg className="h-4 w-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+        </button>
+        <p className="text-xs text-gray-400">Clic para copiar el codigo</p>
       </div>
 
       {/* Booking details */}
-      <div className="bg-white rounded-xl border border-border divide-y divide-border">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm divide-y divide-gray-100">
         {/* Room info */}
         <div className="p-5 space-y-3">
           <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
@@ -262,23 +257,30 @@ export default async function ConfirmationPage({
       </div>
 
       {/* Actions */}
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Link
+            href={`/${slug}`}
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold text-white hover:opacity-90 active:scale-[0.98] transition-all duration-200 min-h-[48px]"
+            style={{ backgroundColor: accentColor }}
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Volver al hotel
+          </Link>
+          <Link
+            href={`/${slug}`}
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 active:bg-gray-100 transition-all duration-200 min-h-[48px]"
+          >
+            Hacer otra reserva
+          </Link>
+        </div>
         <button
           type="button"
-          onClick={() => {}}
-          className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-border rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer print-button"
+          className="flex items-center justify-center gap-2 px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 active:bg-gray-100 transition-all duration-200 cursor-pointer print-button min-h-[48px]"
         >
           <Printer className="h-4 w-4" />
-          Descargar confirmacion
+          Imprimir confirmacion
         </button>
-        <Link
-          href={`/${slug}`}
-          className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white hover:opacity-90 transition-opacity"
-          style={{ backgroundColor: accentColor }}
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Volver al hotel
-        </Link>
       </div>
 
       <script
@@ -287,6 +289,14 @@ export default async function ConfirmationPage({
             document.addEventListener('click', function(e) {
               if (e.target.closest('.print-button')) {
                 window.print();
+              }
+              if (e.target.closest('.copy-code-btn')) {
+                navigator.clipboard.writeText('${booking.booking_code}').then(function() {
+                  var btn = document.querySelector('.copy-code-btn');
+                  var original = btn.innerHTML;
+                  btn.textContent = 'Copiado!';
+                  setTimeout(function() { btn.innerHTML = original; }, 2000);
+                });
               }
             });
           `,

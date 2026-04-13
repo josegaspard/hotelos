@@ -64,13 +64,15 @@ export default async function BookingDetailPage({
 
   return (
     <div>
-      <div className="flex items-center gap-3 mb-6">
-        <Link
-          href={`/${slug}/bookings`}
-          className="p-2 rounded-lg hover:bg-slate-100 transition-colors"
-        >
-          <ArrowLeft className="w-5 h-5 text-slate-500" />
-        </Link>
+      <Link
+        href={`/${slug}/bookings`}
+        className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 mb-4 transition-colors"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Volver a reservas
+      </Link>
+
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
         <div className="flex-1">
           <h1 className="text-2xl font-bold text-slate-900">
             Reserva {booking.booking_code as string}
@@ -84,15 +86,17 @@ export default async function BookingDetailPage({
               (booking.status as string)}
           </span>
         </div>
-        <BookingActions
-          bookingId={bookingId}
-          status={booking.status as string}
-          roomTypeId={booking.room_type_id as string}
-          roomId={booking.room_id as string | null}
-          organizationId={org.id}
-          slug={slug}
-          hasStripePayment={!!booking.stripe_payment_intent_id}
-        />
+        <div className="flex flex-wrap gap-2">
+          <BookingActions
+            bookingId={bookingId}
+            status={booking.status as string}
+            roomTypeId={booking.room_type_id as string}
+            roomId={booking.room_id as string | null}
+            organizationId={org.id}
+            slug={slug}
+            hasStripePayment={!!booking.stripe_payment_intent_id}
+          />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

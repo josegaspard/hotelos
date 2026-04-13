@@ -59,8 +59,8 @@ export default async function HotelLayout({
         logoUrl={org.logo_url}
         organizationId={org.id}
       />
-      <main className="flex-1 overflow-y-auto">
-        <div className="p-6 max-w-7xl mx-auto">{children}</div>
+      <main className="flex-1 overflow-y-auto pt-14 pb-20 md:pt-0 md:pb-0">
+        <div className="p-4 md:p-6 max-w-7xl mx-auto">{children}</div>
       </main>
     </div>
   );
