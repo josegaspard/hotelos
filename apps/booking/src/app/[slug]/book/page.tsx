@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import {
   Bed,
+  BedDouble,
   CalendarDays,
   Users,
   ChevronRight,
@@ -74,6 +75,9 @@ export default function BookPage() {
   const [nightlyPrices, setNightlyPrices] = useState<
     { date: string; price: number }[]
   >([]);
+
+  // Photo gallery
+  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(0);
 
   // Guest form
   const [guestName, setGuestName] = useState("");
@@ -459,14 +463,44 @@ export default function BookPage() {
       {/* Step 1: Review room */}
       {step === 1 && (
         <div className="bg-white rounded-xl border border-border overflow-hidden">
-          {roomType.photos && roomType.photos.length > 0 && (
-            <Image
-              src={roomType.photos[0]}
-              alt={roomType.name}
-              width={800}
-              height={400}
-              className="w-full h-56 md:h-72 object-cover"
-            />
+          {roomType.photos && roomType.photos.length > 0 ? (
+            <div>
+              <Image
+                src={roomType.photos[selectedPhotoIndex] || roomType.photos[0]}
+                alt={roomType.name}
+                width={800}
+                height={400}
+                className="w-full h-56 md:h-72 object-cover"
+              />
+              {roomType.photos.length > 1 && (
+                <div className="flex gap-2 p-3 overflow-x-auto bg-gray-50">
+                  {roomType.photos.map((photo, i) => (
+                    <button
+                      key={photo}
+                      type="button"
+                      onClick={() => setSelectedPhotoIndex(i)}
+                      className={`flex-shrink-0 w-16 h-12 rounded-lg overflow-hidden border-2 transition-colors cursor-pointer ${
+                        i === selectedPhotoIndex
+                          ? "border-primary"
+                          : "border-transparent hover:border-gray-300"
+                      }`}
+                    >
+                      <Image
+                        src={photo}
+                        alt={`${roomType.name} ${i + 1}`}
+                        width={64}
+                        height={48}
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="w-full h-56 md:h-72 bg-gray-100 flex items-center justify-center">
+              <BedDouble className="h-16 w-16 text-gray-300" />
+            </div>
           )}
           <div className="p-6 space-y-5">
             <div>

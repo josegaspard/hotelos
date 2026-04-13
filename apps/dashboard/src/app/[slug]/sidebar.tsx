@@ -15,6 +15,7 @@ import {
   Sparkles,
   Building2,
 } from "lucide-react";
+import { NotificationBadge } from "./notification-badge";
 
 const navItems = [
   { href: "", label: "Dashboard", icon: LayoutDashboard, roles: ["owner", "manager", "receptionist"] },
@@ -32,11 +33,13 @@ export function Sidebar({
   hotelName,
   role,
   logoUrl,
+  organizationId,
 }: {
   slug: string;
   hotelName: string;
   role: string;
   logoUrl: string | null;
+  organizationId: string;
 }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -84,7 +87,7 @@ export function Sidebar({
             <Link
               key={item.href}
               href={fullHref}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition ${
+              className={`relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition ${
                 isActive
                   ? "bg-blue-600 text-white"
                   : "text-slate-300 hover:bg-slate-800 hover:text-white"
@@ -92,6 +95,9 @@ export function Sidebar({
             >
               <item.icon className="w-4.5 h-4.5 shrink-0" />
               {item.label}
+              {item.href === "/bookings" && (
+                <NotificationBadge organizationId={organizationId} />
+              )}
             </Link>
           );
         })}

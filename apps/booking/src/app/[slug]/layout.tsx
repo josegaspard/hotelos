@@ -13,16 +13,32 @@ export async function generateMetadata({
   const supabase = await createClient();
   const { data: org } = await supabase
     .from("organizations")
-    .select("name, description")
+    .select("name, description, logo_url, cover_url")
     .eq("slug", slug)
     .eq("status", "active")
     .single();
 
   if (!org) return { title: "Hotel no encontrado" };
 
+  const title = `${org.name} — Reserva en linea`;
+  const description = org.description || `Reserva en ${org.name}`;
+  const ogImage = org.logo_url || org.cover_url || undefined;
+
   return {
-    title: `${org.name} — Reservar`,
-    description: org.description || `Reserva en ${org.name}`,
+    title,
+    description,
+    viewport: "width=device-width, initial-scale=1",
+    openGraph: {
+      title,
+      description,
+      ...(ogImage ? { images: [{ url: ogImage }] } : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      ...(ogImage ? { images: [ogImage] } : {}),
+    },
   };
 }
 

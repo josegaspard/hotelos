@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import type { RoomType, Room } from "@hotelos/shared/types";
 import { RoomTypeForm } from "./room-type-form";
+import { PhotoUpload } from "./photo-upload";
 import { RoomsList } from "./rooms-list";
 
 export default async function RoomTypeDetailPage({
@@ -58,6 +59,12 @@ export default async function RoomTypeDetailPage({
           roomType={roomType as RoomType}
           slug={slug}
           currency={org.currency}
+        />
+
+        <PhotoUpload
+          roomTypeId={id}
+          organizationId={org.id}
+          existingPhotos={(roomType as RoomType).photos ?? []}
         />
 
         <RoomsList

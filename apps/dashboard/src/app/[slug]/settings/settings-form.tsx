@@ -4,7 +4,7 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Organization } from "@hotelos/shared/types";
 import { CURRENCIES, CANCELLATION_POLICIES } from "@hotelos/shared/constants";
-import { Save, Upload, Loader2, Code, Copy, Check } from "lucide-react";
+import { Save, Upload, Loader2, Code, Copy, Check, Eye, EyeOff } from "lucide-react";
 
 interface SettingsFormProps {
   organization: Organization;
@@ -63,6 +63,7 @@ export function SettingsForm({ organization }: SettingsFormProps) {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [showWidgetPreview, setShowWidgetPreview] = useState(false);
 
   const supabase = createClient();
 
@@ -136,7 +137,8 @@ export function SettingsForm({ organization }: SettingsFormProps) {
     setTimeout(() => setSaved(false), 3000);
   }
 
-  const widgetCode = `<div id="hotelos-widget" data-hotel="${organization.slug}"></div>\n<script src="https://hotelos.vercel.app/widget.js" async></script>`;
+  const widgetScriptUrl = `https://hotelos-dashboard-josegaspards-projects.vercel.app/api/widget/${organization.slug}`;
+  const widgetCode = `<script src="${widgetScriptUrl}" async></script>`;
 
   function copyWidget() {
     navigator.clipboard.writeText(widgetCode);
@@ -572,6 +574,47 @@ export function SettingsForm({ organization }: SettingsFormProps) {
             )}
           </button>
         </div>
+
+        <div className="mt-4 flex items-center gap-3">
+          <button
+            type="button"
+            onClick={copyWidget}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            {copied ? (
+              <Check className="w-4 h-4" />
+            ) : (
+              <Copy className="w-4 h-4" />
+            )}
+            {copied ? "Copiado" : "Copiar codigo"}
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowWidgetPreview(!showWidgetPreview)}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+          >
+            {showWidgetPreview ? (
+              <EyeOff className="w-4 h-4" />
+            ) : (
+              <Eye className="w-4 h-4" />
+            )}
+            {showWidgetPreview ? "Ocultar vista previa" : "Vista previa"}
+          </button>
+        </div>
+
+        {showWidgetPreview && (
+          <div className="mt-4 border border-slate-200 rounded-xl overflow-hidden">
+            <div className="bg-slate-50 px-4 py-2 border-b border-slate-200">
+              <p className="text-xs text-slate-500">Vista previa del widget</p>
+            </div>
+            <iframe
+              src={`/api/widget/${organization.slug}/preview`}
+              srcDoc={`<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;min-height:200px;background:#f1f5f9;display:flex;align-items:flex-end;"><script src="${widgetScriptUrl}" async><\/script></body></html>`}
+              className="w-full h-[220px] border-0"
+              title="Widget preview"
+            />
+          </div>
+        )}
       </div>
     </form>
   );

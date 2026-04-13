@@ -56,6 +56,39 @@ export default async function HotelPage({
   const defaultAdults = sp.adults || "2";
   const defaultChildren = sp.children || "0";
 
+  // Fetch cheapest room type for priceRange
+  const { data: cheapestRoom } = await supabase
+    .from("room_types")
+    .select("base_price")
+    .eq("organization_id", org.id)
+    .eq("is_active", true)
+    .order("base_price", { ascending: true })
+    .limit(1)
+    .single();
+
+  const schemaOrg = {
+    "@context": "https://schema.org",
+    "@type": "Hotel",
+    name: org.name,
+    description: org.description || undefined,
+    address: org.address
+      ? {
+          "@type": "PostalAddress",
+          streetAddress: org.address,
+          addressLocality: org.city || undefined,
+          addressCountry: org.country || undefined,
+        }
+      : undefined,
+    starRating: org.star_rating
+      ? { "@type": "Rating", ratingValue: org.star_rating }
+      : undefined,
+    telephone: org.phone || undefined,
+    image: org.cover_url || org.logo_url || undefined,
+    priceRange: cheapestRoom
+      ? `Desde ${org.currency} ${cheapestRoom.base_price}`
+      : undefined,
+  };
+
   const accentColor = org.primary_color || "#1e40af";
 
   async function searchAvailability(formData: FormData) {
@@ -71,6 +104,10 @@ export default async function HotelPage({
 
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaOrg) }}
+      />
       {/* Hero section */}
       <div className="relative bg-gray-900 overflow-hidden">
         {org.cover_url ? (

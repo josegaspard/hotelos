@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { Sidebar } from "./sidebar";
 
 export default async function HotelLayout({
@@ -35,6 +36,20 @@ export default async function HotelLayout({
 
   if (!membership) redirect("/");
 
+  // Redirect to onboarding if org is still in onboarding status
+  const headersList = await headers();
+  const pathname = headersList.get("x-next-pathname") || headersList.get("x-invoke-path") || "";
+  const isOnboardingPage = pathname.includes(`/${slug}/onboarding`);
+
+  if (org.status === "onboarding" && !isOnboardingPage) {
+    redirect(`/${slug}/onboarding`);
+  }
+
+  // If on onboarding page, render without sidebar
+  if (isOnboardingPage) {
+    return <>{children}</>;
+  }
+
   return (
     <div className="flex h-screen bg-slate-50">
       <Sidebar
@@ -42,6 +57,7 @@ export default async function HotelLayout({
         hotelName={org.name}
         role={membership.role}
         logoUrl={org.logo_url}
+        organizationId={org.id}
       />
       <main className="flex-1 overflow-y-auto">
         <div className="p-6 max-w-7xl mx-auto">{children}</div>
